@@ -1,0 +1,25 @@
+---
+title: "ProofScale: MaxProof: Scaling Mathematical Proof with Generative-Verifie"
+abstract: "Population‑level test‑time scaling for LLM‑driven mathematical proofs."
+authors:
+  - name: "Andrew Young"
+    affiliation: "Automate Capture Research"
+publishedDate: 2026-06-13
+tags:
+  - Generative‑Verifier reinforcement learning
+  - Mathematical proof generation
+  - Scalable proof verification
+  - Population‑level test‑time scaling
+  - Proof scaling algorithms
+status: published
+featured: false
+pdfUrl: "https://research.automate-capture.com/papers/RR-proof-scale-Young2026.pdf"
+---
+
+Over the past several months I have been driven by a simple but persistent question: can the iterative process of mathematical proof discovery be accelerated by treating proof generation and verification as a coordinated game rather than as a one‑shot inference? Traditional theorem provers excel at checking the correctness of a candidate proof, yet they rely on handcrafted heuristics to propose the proof steps themselves. My aim was to close that loop by constructing a system that not only proposes many proof candidates in parallel, but also learns from the verification feedback to improve its own proposals, ultimately selecting the most promising argument from a population of possibilities. The resulting package, llm_proof_tournament, embodies this vision as a self‑contained Python library that can be dropped into any research workflow to explore proof‑search at scale.
+
+The core of the implementation follows a two‑phase architecture. In the generation phase a configurable sampler produces a diverse set of proof drafts for a given theorem statement; each draft is represented as a structured sequence of logical steps. The verification phase then dispatches these drafts to a verifier component that checks each step against a formal kernel, returning a binary pass/fail flag together with a lightweight confidence score derived from the number of satisfied subgoals. A lightweight reinforcement loop updates the sampler’s policy parameters based on the verification outcomes, biasing future samples toward patterns that have historically succeeded. All of this is orchestrated by a manager that handles batch submission, parallel execution, and ranking. The public API exposes three simple functions—`generate_candidates`, `verify_candidates`, and `rank_candidates`—so that downstream users can plug in their own theorem statements, retrieve the verified proofs, and obtain a sorted list of the most credible arguments without needing to understand the underlying orchestration.
+
+Running the test suite revealed several practical insights. First, diversity in the initial candidate pool is crucial; when the sampler collapses to a narrow distribution early on, verification quickly stalls because the verifier repeatedly encounters the same failure modes. Introducing a modest amount of stochasticity in the step selection—akin to temperature‑controlled sampling—kept the search space alive and allowed the reinforcement signal to surface non‑obvious proof strategies. Second, the verification kernel proved to be a bottleneck; even modestly sized theorems required several seconds per candidate, so batching and asynchronous execution were essential to achieve reasonable throughput. Finally, the ranking heuristic that combines raw verification success with the confidence score performed well on the benchmark set, but it sometimes over‑favored longer proofs that accumulated more subgoal checks, suggesting that a length‑penalized metric could yield a more parsimonious selection.
+
+Looking ahead, the library opens several avenues for extension. One promising direction is to integrate a curriculum‑learning schedule that gradually increases theorem difficulty as the sampler’s policy improves, thereby mimicking the way mathematicians build expertise. Another is to explore meta‑learning across different domains—geometry, algebra, combinatorics—to see whether a shared policy can transfer proof techniques between topics. Finally, scaling the verification component with parallel theorem provers or specialized decision procedures could dramatically reduce latency, making the system viable for real‑time interactive use. In the broader research landscape, this work sits at the intersection of automated reasoning, reinforcement learning, and program synthesis, offering a concrete embodiment of the idea that proof discovery can be treated as a population‑level optimization problem. By providing an open, well‑tested codebase, I hope to encourage others to experiment with these ideas and push the boundary of what automated systems can achieve in mathematical reasoning.
