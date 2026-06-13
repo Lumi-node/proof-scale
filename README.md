@@ -12,14 +12,14 @@
   <a href="https://github.com/Lumi-node/proof-scale"><img src="https://img.shields.io/badge/GitHub-Repository-blue?logo=github" alt="GitHub"></a>
   <a href="https://github.com/Lumi-node/proof-scale/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
   <a href="https://pypi.org/project/proof-scale/"><img src="https://img.shields.io/badge/Python-≥3.10-blue.svg" alt="Python ≥3.10"></a>
-  <a href="https://github.com/Lumi-node/proof-scale/actions"><img src="https://img.shields.io/badge/tests-184-success.svg" alt="Tests"></a>
+  <a href="https://github.com/Lumi-node/proof-scale/actions"><img src="https://img.shields.io/badge/tests-54-success.svg" alt="Tests"></a>
 </p>
 
 ---
 
 ProofScale implements a full population‑level test‑time scaling pipeline for large language models (LLMs) that generate mathematical proofs. By treating proof candidates as a population, the system can dynamically allocate compute, repair corrupted proofs, and select the most reliable proof using a tournament‑style ranking. This approach improves both the quality and efficiency of LLM‑driven theorem proving, making it feasible to scale to large benchmark suites without sacrificing correctness.
 
-The library is built on a clean `src/` layout, exposing a concise Python API (`proof_scale`) that integrates generation, verification, repair, and reinforcement‑learning‑based policy updates. Extensive unit tests (184 files) guarantee that each component behaves as expected, from tokenisation to end‑to‑end proof selection.
+The library is built on a clean `src/` layout, exposing a concise Python API (`proof_scale`) that integrates generation, verification, repair, and reinforcement‑learning‑based policy updates. A unit-test suite (54 tests across 5 files) exercises each component, from tokenisation to end‑to‑end proof selection.
 
 ---
 
@@ -183,13 +183,12 @@ ProofScale adapts these ideas to the domain of mathematical proof generation, ad
 
 ## Testing
 
-The repository ships with **184** unit‑test files covering every public function. Run the full suite with:
+The repository ships with **54** unit tests across 5 test files. Run the full suite with:
 
 ```bash
 pytest -q
 ```
 
-Continuous integration runs on every push to ensure 100 % test coverage.
 
 ## Contributing
 
