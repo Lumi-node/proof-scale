@@ -1,60 +1,21 @@
 # ProofScale
 
-## Population‑level test‑time scaling for LLM‑driven mathematical proofs
+**Population‑level test‑time scaling for LLM‑driven mathematical proofs.**
 
-<div align="center">
-  <a href="https://github.com/yourorg/llm_proof_tournament" target="_blank">
-    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
-  </a>
-  <a href="https://pypi.org/project/llm-proof-tournament/" target="_blank">
-    <img src="https://img.shields.io/pypi/v/llm-proof-tournament.svg" alt="PyPI version">
-  </a>
-</div>
+ProofScale turns a single proof attempt into a population: generate many candidates, verify and critique each, repair the promising ones, and select a winner via a diversity‑aware tournament — with an optional RL loop to improve the generator. A heuristic mode runs the full pipeline with no model downloads.
 
----  
+## Quick Start
 
-### 🚀 Quick install
+```python
+from llm_proof_tournament import Config, ProofPipeline
 
-```bash
-pip install llm-proof-tournament
+# Heuristic mode runs the whole pipeline with no model downloads
+config = Config.load(use_heuristic=True)
+pipeline = ProofPipeline(config)
+
+result = pipeline.run("Prove that n^2 - n is even for all integers n.")
+print(result.proof_text)
+print(result.confidence)
 ```
 
-[Get started →](getting_started.md)
-
----  
-
-## Features
-
-<div class="grid cards">
-
-### 🔄 Population‑level Generation
-Generate **hundreds of proof candidates** in parallel, leveraging LLMs to explore diverse solution paths.
-
-### ✅ Automated Verification
-Each candidate is **checked with a symbolic verifier**; invalid or corrupted proofs are filtered out automatically.
-
-### 📊 Scalable Ranking
-Statistical ranking selects the **most reliable proof** using Bayesian confidence intervals and population‑level metrics.
-
-### 🛠️ Seamless Integration
-A clean `src/` layout, type‑annotated API, and **unit‑tested pipeline** ready to plug into your research workflow.
-
-</div>
-
----  
-
-## Why ProofScale?
-
-- **Robustness** – Guarantees a mathematically valid proof even when individual LLM outputs are noisy.  
-- **Scalability** – Handles large populations of candidates without manual intervention.  
-- **Transparency** – All steps (generation, verification, ranking) are logged and reproducible.  
-
----  
-
-### Ready to explore?
-
-```bash
-python -m llm_proof_tournament.run --example theorem.yaml
-```
-
-Dive into the docs, run the examples, and see how ProofScale turns LLM creativity into provable mathematics.
+See [Installation](getting-started/installation.md) and the [Quick Start guide](getting-started/quick-start.md) to go further, or the [API Reference](reference.md).

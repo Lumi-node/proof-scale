@@ -1,20 +1,20 @@
 # Installation
 
-## From PyPI
+Install the latest version directly from GitHub:
 
 ```bash
-pip install proof-scale
+pip install git+https://github.com/Lumi-node/proof-scale.git
 ```
 
-## From Source
+Requires Python ≥ 3.10.
+
+### Development install
 
 ```bash
 git clone https://github.com/Lumi-node/proof-scale.git
 cd proof-scale
 pip install -e ".[dev]"
+pytest -q
 ```
 
-## Requirements
-
-- Python >= 3.10
-- Dependencies: __future__, llm_proof_tournament, numpy, random
+> Not published to PyPI — install from source as shown above.
