@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#architecture-llm_proof_tournament" class="md-skip">
+        <a href="#architecture" class="md-skip">
           Skip to content
         </a>
       
@@ -596,43 +596,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-system-overview" class="md-nav__link">
+  <a href="#modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. System Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-module-relationship-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Module Relationship Diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-modulebymodule-description" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Module‑by‑Module Description
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-data-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Data Flow
+        Modules
       
     </span>
   </a>
@@ -755,43 +722,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-system-overview" class="md-nav__link">
+  <a href="#modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. System Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-module-relationship-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Module Relationship Diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-modulebymodule-description" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Module‑by‑Module Description
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-data-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Data Flow
+        Modules
       
     </span>
   </a>
@@ -818,148 +752,65 @@
   
 
 
-<h1 id="architecture-llm_proof_tournament">Architecture – <strong>llm_proof_tournament</strong><a class="headerlink" href="#architecture-llm_proof_tournament" title="Permanent link">&para;</a></h1>
-<h2 id="1-system-overview">1. System Overview<a class="headerlink" href="#1-system-overview" title="Permanent link">&para;</a></h2>
-<p><code>llm_proof_tournament</code> implements the <em>population‑level test‑time scaling</em> pipeline for large language models that generate mathematical proofs.<br />
-Given a list of theorem statements, the system:</p>
-<ol>
-<li><strong>Generates</strong> multiple proof candidates per statement (<code>generator</code>).  </li>
-<li><strong>Repairs</strong> partially corrupted candidates (<code>repair</code>).  </li>
-<li><strong>Verifies</strong> each candidate with a lightweight theorem‑checker (<code>verifier</code>).  </li>
-<li><strong>Ranks</strong> the population through a tournament‑style selection (<code>tournament</code>).  </li>
-<li><strong>Learns</strong> from the outcomes with a reinforcement‑learning loop (<code>rl_trainer</code>).  </li>
-</ol>
-<p>All components are pure‑Python, stateless where possible, and wired together by a thin façade in <code>main.py</code>. The package follows a classic <code>src/</code> layout, exposing a clean public API (<code>src/llm_proof_tournament/__init__.py</code>) that can be imported as:</p>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">llm_proof_tournament</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Config</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Data</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">Generator</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">Repair</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">Verifier</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">Tournament</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">RLTrainer</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">run</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">run_batch</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
-</code></pre></div>
-<p>The architecture is deliberately modular so that each piece can be swapped (e.g., a different LLM, a more powerful verifier, or an alternative RL algorithm) without touching the rest of the code base.</p>
-<hr />
-<h2 id="2-module-relationship-diagram">2. Module Relationship Diagram<a class="headerlink" href="#2-module-relationship-diagram" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>graph TD
-    A[Config] --&gt; B[Generator]
-    A --&gt; C[Repair]
-    A --&gt; D[Verifier]
-    A --&gt; E[Tournament]
-    A --&gt; F[RLTrainer]
-    B --&gt; G[ProofCandidate]
-    C --&gt; G
-    D --&gt; G
-    E --&gt; G
-    F --&gt; G
-    B --&gt; H[Experience] 
-    F --&gt; H
-    G --&gt; I[VerifierOutput]
-    I --&gt; D
-    B --&gt; J[Data]
-    J --&gt; B
-    J --&gt; E
-    subgraph CLI
-        K[main.run] --&gt; B
-        K --&gt; C
-        K --&gt; D
-        K --&gt; E
-        K --&gt; F
-    end
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#bbf,stroke:#333,stroke-width:2px
-    style D fill:#bbf,stroke:#333,stroke-width:2px
-    style E fill:#bbf,stroke:#333,stroke-width:2px
-    style F fill:#bbf,stroke:#333,stroke-width:2px
-    style G fill:#cfc,stroke:#333,stroke-width:1px
-    style H fill:#ffc,stroke:#333,stroke-width:1px
-    style I fill:#fcc,stroke:#333,stroke-width:1px
-    style J fill:#eef,stroke:#333,stroke-width:1px
-    style K fill:#ddd,stroke:#333,stroke-width:2px</code></pre>
-<p><em>Arrows denote data or control flow. The <code>Config</code> object is the single source of truth for hyper‑parameters and is injected into every component.</em></p>
-<hr />
-<h2 id="3-modulebymodule-description">3. Module‑by‑Module Description<a class="headerlink" href="#3-modulebymodule-description" title="Permanent link">&para;</a></h2>
+<h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
+<p>ProofScale is organized around a small set of modules that form a pipeline:</p>
+<pre class="mermaid"><code>flowchart LR
+    A["Generator"]
+    B["Verifier"]
+    C["Repair"]
+    D["Tournament"]
+    E["RL trainer"]
+    A --&gt; B
+    B --&gt; C
+    C --&gt; D
+    D --&gt; E</code></pre>
+<h2 id="modules">Modules<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Module</th>
-<th>Public API (excerpt)</th>
-<th>Role</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong><code>src/llm_proof_tournament/__init__.py</code></strong></td>
-<td><code>from .config import Config</code><br><code>from .data import Data</code><br><code>from .generator import Generator</code><br><code>from .repair import Repair</code><br><code>from .verifier import Verifier</code><br><code>from .tournament import Tournament</code><br><code>from .rl_trainer import RLTrainer</code><br><code>from .main import run, run_batch</code></td>
-<td>Re‑exports the core classes/functions so users can import the package with a single statement. Also defines <code>__all__</code>.</td>
+<td><code>config</code></td>
+<td>Configuration for the proof tournament pipeline.</td>
 </tr>
 <tr>
-<td><strong><code>config.py</code></strong></td>
-<td><code>def load(cls, **overrides) -&gt; Config</code><br><code>def as_dict(self) -&gt; dict</code></td>
-<td>Holds all configurable hyper‑parameters (model name, temperature, tournament size, RL learning rates, etc.). <code>load</code> creates a <code>Config</code> instance from defaults + optional overrides; <code>as_dict</code> is useful for logging.</td>
+<td><code>data</code></td>
+<td>Dataset loading for proof tournament training and evaluation.</td>
 </tr>
 <tr>
-<td><strong><code>data.py</code></strong></td>
-<td><code>def statements(self) -&gt; List[str]</code><br><code>def proofs(self) -&gt; List[str]</code></td>
-<td>Provides a thin wrapper around the benchmark dataset (e.g., a JSON file of theorem statements and reference proofs). The methods return raw strings; the dataset is read lazily to keep memory usage low.</td>
+<td><code>generator</code></td>
+<td>Proof generation via transformer sampling with RL-guided decoding.</td>
 </tr>
 <tr>
-<td><strong><code>generator.py</code></strong></td>
-<td><code>def generate(self, statement: str, num_samples: int = 0) -&gt; List[ProofCandidate]</code><br><code>def reward_baseline(self) -&gt; float</code><br><code>def reward_baseline(self, value: float)</code><br><code>def get_parameters(self)</code></td>
-<td>Wraps the LLM inference API. <code>generate</code> returns a list of <code>ProofCandidate</code> objects (each holds the text, log‑probability, and a token‑level mask). The <em>reward baseline</em> is a moving average used by the RL trainer to compute advantage estimates.</td>
+<td><code>main</code></td>
+<td>High-level orchestrator for the proof tournament pipeline.</td>
 </tr>
 <tr>
-<td><strong><code>repair.py</code></strong></td>
-<td><code>def repair(self, candidate: ProofCandidate, mask: np.ndarray) -&gt; ProofCandidate</code></td>
-<td>Takes a possibly corrupted proof and a binary mask (1 = keep token, 0 = replace) and re‑generates only the masked positions. This enables <em>localized</em> fixing without re‑sampling the whole proof.</td>
+<td><code>repair</code></td>
+<td>Proof repair: fixes flawed proofs using verifier error masks.</td>
 </tr>
 <tr>
-<td><strong><code>verifier.py</code></strong></td>
-<td><code>def score(self, candidate: ProofCandidate) -&gt; VerifierOutput</code><br><code>def threshold(self) -&gt; float</code></td>
-<td>Implements a fast, differentiable verifier (e.g., a small transformer that predicts “valid/invalid”). <code>score</code> returns a <code>VerifierOutput</code> containing a raw confidence and a calibrated probability. The <code>threshold</code> is the decision boundary used by the tournament.</td>
+<td><code>rl_trainer</code></td>
+<td>PPO-style reinforcement learning trainer for the proof generator.</td>
 </tr>
 <tr>
-<td><strong><code>tournament.py</code></strong></td>
-<td><code>def select(self, population: List[ProofCandidate]) -&gt; ProofCandidate</code><br><code>def select_top_k(self, population: List[ProofCandidate], k: int = 1) -&gt; List[ProofCandidate]</code><br><code>def tournament_round(... )</code></td>
-<td>Conducts a single‑elimination tournament over a population of candidates. <code>select</code> returns the winner; <code>select_top_k</code> can be used for elitism. The round function handles pairing, scoring via <code>Verifier</code>, and optional mutation via <code>Repair</code>.</td>
+<td><code>tournament</code></td>
+<td>Tournament selection over a population of proof candidates.</td>
 </tr>
 <tr>
-<td><strong><code>rl_trainer.py</code></strong></td>
-<td><code>def add(self, exp: Experience)</code><br><code>def sample(self, batch_size: int) -&gt; List[Experience]</code><br><code>def clear(self)</code><br><code>def step(self, batch: List[ProofCandidate]) -&gt; dict</code><br><code>def update_policy(self) -&gt; dict</code><br><code>def stats(self) -&gt; dict</code></td>
-<td>Stores trajectories (<code>Experience</code> = (state, action, reward, next_state)) collected from tournament outcomes. Provides mini‑batch sampling, a <code>step</code> method that computes policy gradients, and an <code>update_policy</code> that applies the optimizer. <code>stats</code> reports learning curves.</td>
+<td><code>utils</code></td>
+<td>Data containers and utility functions for the proof tournament pipeline.</td>
 </tr>
 <tr>
-<td><strong><code>utils.py</code></strong></td>
-<td><code>def mean_log_prob(self) -&gt; float</code><br><code>def tokenize(text: str) -&gt; List[str]</code><br><code>def levenshtein(a: str, b: str) -&gt; int</code><br><code>def calibrate_confidence(raw_score: float, temperature: float = 1.0) -&gt; float</code></td>
-<td>Miscellaneous helpers: aggregation of log‑probabilities, a deterministic tokenizer (splits on whitespace/punctuation), a Levenshtein distance implementation for measuring proof similarity, and a temperature‑based calibration function used by the verifier.</td>
-</tr>
-<tr>
-<td><strong><code>main.py</code></strong></td>
-<td><code>def run(self, statement: str) -&gt; ProofCandidate</code><br><code>def run_batch(self, statements: List[str]) -&gt; List[ProofCandidate]</code></td>
-<td>High‑level entry point used by the CLI and by downstream scripts. <code>run</code> orchestrates generation → repair → verification → tournament selection for a single theorem; <code>run_batch</code> processes a list in parallel (via <code>concurrent.futures</code>).</td>
+<td><code>verifier</code></td>
+<td>Proof verification: scores candidates for mathematical validity.</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="4-data-flow">4. Data Flow<a class="headerlink" href="#4-data-flow" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Configuration</strong> (<code>Config.load</code>) → all components.  </li>
-<li><strong>Dataset</strong> (<code>Data.statements</code>) supplies a theorem string.  </li>
-<li><strong>Generation</strong> (<code>Generator.generate</code>) creates <em>N</em> <code>ProofCandidate</code>s. Each candidate carries:  </li>
-<li><code>text</code> (the proof),  </li>
-<li><code>log_prob</code> (sum of token log‑probabilities),  </li>
-<li><code>mask</code> (optional binary mask for later repair).  </li>
-<li><strong>Repair (optional)</strong> – If a candidate’s verifier score falls below the threshold, <code>Repair.repair</code> is invoked with a mask that targets low‑confidence tokens. The repaired candidate replaces the original in the population.  </li>
-<li><strong>Verification</strong> – <code>Verifier.score</code> evaluates every candidate, returning a <code>VerifierOutput</code> containing:  </li>
-<li><code>raw_score</code> (logit),  </li>
-<li><code>prob</code> (calibrated via <code>utils.calibrate_confidence</code>).  </li>
-<li><strong>Tournament</strong> – `Tournament.tournament</li>
-</ol>
 
 
 
